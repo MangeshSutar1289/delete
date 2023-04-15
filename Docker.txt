@@ -1,0 +1,254 @@
+ Docker-
+	1)dockr is cosider as a engine
+	2)it s act as hypervizer
+	3- its able to run containers on host 
+	4- its a open source platform to design and run your apllication.
+	5- its hosted containers on host os to, to run appliacations
+	6- u can install docker on any os , but its only support own linux os
+	7- its a platform as a service, make os level vertulization. 
+	
+	advantages-
+		-light weight appliation
+		- no pre allocation of ram
+	disadvantages -
+		- do not manages large num of container
+ 
+------------------------------------------------------------------------------------------
+
+install docker- (docker hub )img available......
+	# yum install docker -y
+	# which docker - verify install
+	# docker -v - check version.
+	# service docker status 
+	# docker info
+	# service docker start
+-----------------------------------------------------------------
+	# docker images  - see imgs
+	# docker ps	 - see running containers
+	# docker ps -a   - see containers
+	# docker run -it ubuntu /bin/bash  - run img
+	# docker pull (os name)            - load eimg from docker hub
+---------------------------------------------------------------------
+Dockers commands-
+	# docker images - see all present img
+	# docker search jenkins - find img in docker hub
+	# docker pull jenkins - donload img docker hub to local machine.
+	# docker run -it --name (........)ubantu/bin/bash - give name to container.
+	# service docker status - check service start or not
+	# docker start NAme - to start docker.
+	# docker attach name - go inside container
+	# docker ps -a  - see allcontainers.
+	# docker ps     - see all running containers.
+	# docker stop name - stop container
+	# docker rm name - delete a container.
+
+############# Lec -27
+docker file components and diff command
+- 3 types of images u can share others.
+	1st- pull imanges from docker hub, 1 img copy stored in a own and sharedocker	
+	
+	
+--------------------------------------------------------------------------------------------------------------------
+2nd- create container and make img and share
+create file on a contianer and create img and share and check same config....
+	#yum install docker -y
+	#service docker start
+	#docker run --name Mangesh -it ubuntu /bin/bashdocker -  set name for container and create newcontain.....
+	-go inside a container
+	# cd tmp
+	# touch mangesh
+	# exit- exit from conti......
+	# docker diff (continer name)-see changes u made
+	# docker commit Mangesh updaimg - create  new img from existing continer
+	# docker imanges
+	# docker run -it --name sutar updateimg /bin/bash - create container from new img and changes name 
+-------------------------------------------------------------------------------------------------------------------------------------	 
+commands-
+	# docker run -it name /bin/bash    - create 1 container 1st- 
+ 	# cd tmp/
+	# touch filename -create one file inside thhis tmp directory
+	# docker diff nameimg updateimages - 
+	# docker commit newcontainer updateimages - create images of this container
+	# docker images
+
+	# docker run -it --name rajcontainer updateimages /bin/bash - now create container from this image.
+----------------------------------------------------------------------------------------------------------------------------------------------------
+3rd- Dockerfile
+		-it is a txt file
+		- its contains set of instaruction
+		- instructin writein capital-	
+			- FROM -base image. this command must be on top of the dockerfile
+			- RUN- to execute command
+			- MAINTAINER -Author/owner/description.
+			- COPY - copy file from local machine.
+			- ADD - similar to copy, its use to download file from internet.
+			- EXPOSE - to expose ports such as 8080 for tomcat , port 80 for ngix etc.
+			- WORKDIR - to set working directory for a container.
+			- CMD - execute command during container creation.
+			- ENTRYPOINT - similar to CMD- 1st command execute by entrypoint only.
+			- ENV - Environment Variable.
+	practical- (Dockerfile - image - container)
+		s1- create a file named Dockerfile
+		s2- Add instruction in docker fil
+
+		s3- build dockerfile to create img
+		s4- run images to crate containers.
+			# vi Dokerfile
+			   - FROM ubuntu
+			  - RUN echo "name" > /tmp/testfile.
+   		* To create images out of dockerfile.
+			#docker build -t myimg .
+			#docker ps -a
+			#docker images
+			# docker run -it --name mycontainer myimg /bin/bash - to create container above img
+			#cat /tmp/testfile
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+#############lec -28
+(Docker volume and how to share it)
+
+	- volume is a simple diectory inside your own container.
+	- firstly, we have to declare this directory as volume and then share volume.
+	- even if we are stop containers, still we can access volume.
+	- you can declare a directory as a volume only while creating container.
+	- you cant create vloume from existing containers.
+	- you can share one volume across any number of container
+	- you can mapped volume in two ways
+		- container-- container
+		- host -- container.
+		
+
+		- benefit of volume-
+			- decoupling container from stages
+			- share vol across diff container
+			- attach volume to container
+			- on deleteing container volume cna not be delete
+---------------------------------------------------------------------------------------------------------------------------------------------
+creating volume from dockerfile
+ 1- create dockerfile and wirte-
+	FROM ubuntu
+	VOLUME ["/myvolume1"]
+
+ 2. them create img from this dockerfile
+	#docker build -t myimage .
+
+ 3. new create a container from this image and run
+	# docker run -it --name container1 myimages /bin/bash
+	#ls
+4. now, share vol with another container
+	container --- container
+	# docker run -it --name container2 --privileged=true --volume from container1 ubuntu/bin/bash
+5. now after creating con...2 myvolume1 is onside whtsever you do in one volume, can see from other volume
+	#touch /myvolume1/samplefile
+	#docker start container1
+	#docker attach container1
+	#ls /myvolume1
+	(see changes)
+	#exit 
+
+commands- create a volume in new containers
+ 	#yum update -y
+	#yum install docker -y
+	#systemctl/service docker start
+	#service docker status
+	#ls
+	#touch file1 file2
+	#vi Dockerfile
+		-FROM ubuntu
+		-VOLUME ["/myvolume"]
+		exit
+	#docker build -t myimg .
+	#docker images
+	#docker run -it --name container1 myimg /bin/bash
+	#ls
+	#cd myvolume
+	#touch file12 file13 file14
+	#ls
+	#exit
+	-----------------(creating 2nd container)
+	#docker run -it --name container2 --privileged=true --volumes-from container1 ubuntu /bin/bash
+	#ls
+	#cd myvolume
+	#ls
+	# exit..................(complete prictical here)
+---------------------------------------------------------------------------------------------------------------------------------------------------
+	#docker start container1
+	#docker attach container1
+	#ls
+	#cd myvolume/
+	#ls
+	
+	#docker build
+------------------------------------------------------------------------------------------------------------------------------
+method 2 create dockervolume and attach-
+	(now try to create volume by using command)
+		# exit
+		# docker run -it --name container3 -v /volume2 ubuntu /bin/bash
+		#ls
+		#cd volume2
+		#touch voll1 voll2
+		#ls
+		#exit
+		----------------(creating 2nd container)
+		#docker run -it --nmae container4 --privilege=ture --volume-from container3 ubuntu /bin/bash
+		#ls
+		#cd volume2
+		#ls--------------------------------(complete practical here)
+		#touch rajput
+		#exit
+		#docker start container3
+		#docker attch container 3
+		#ls
+		#cd volume2
+		#ls
+		--------------------(complete)
+
+----------------------------------------------------------------------------------------------------------------------------------
+method 3 volume share on host container
+
+	#ls
+	#docker run -it --name hostcon -v /home/ec2-user:rajput --privileged=true ubuntu /bin/bash
+	#ls
+	#cd rajput/
+	#ls
+	#exit
+	#ls
+
+-------------------------------------------------------------------------------------------------
+(volume commands-)
+	# docker volume ls
+	# docker volume create<volumename>
+	# docker volume rm <volume name>
+	#docker volume prune - use removed unuse volume deleting
+	# docker volume inspect <volume name>
+	# docker container inspect <volume name>
+----------------------------------------------------------------------------------------------------------------------------------------(complete)
+####################################(lec - 29)
+(Docker port expose)- 0 - 65535 logical ports available.
+	-launch ec2 linux-(launch server and add launch container and host web site)
+	#sudo su
+	#yum update -y
+	#yun install docker -y
+	#service docker start
+	#docker run -td --name techserver -p 80:80 ubuntu /bin/bash
+	#docker ps 
+	#docker port techserver
+	#docker exec -it techserver /bin/bash
+	#apt-get upadate
+	#apt-get insatll apache2 -y
+	#cd /var/www/html
+		- echo "hello w....."
+	#server apache2 start
+--------------------------------------------------------------------------------------------------------------------------------------------------	
+
+
+
+	
+	
+
+
+
+
+
